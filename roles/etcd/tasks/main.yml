@@ -1,0 +1,28 @@
+# ---
+# # - hosts: "{{ host }}"
+# - hosts: etcd
+#   gather_facts: false
+#   remote_user: root
+
+#   tasks:
+
+- name: "test ping"
+  ping:
+
+- name: prepare some dirs
+  file: name={{ item }} state=directory
+  with_items:
+  - "{{ etcd_install_path }}"       # etcd 安装路径
+  - "{{ etcd_install_path }}/data " # etcd数据目录
+- name: "copy config files"
+  template: src="{{ item.src }}" dest="{{ item.dest }}" mode=0755 owner=root group=root
+  with_items:
+    - { src: "v3.3.10/etcd.conf.j2",    dest: "{{ etcd_install_path }}/etcd.conf" }
+    - { src: "v3.3.10/etcd.service.j2", dest: "{{ etcd_install_path }}/etcd.service" }
+    - { src: "v3.3.10/etcd.service.j2", dest: "/usr/lib/systemd/system/etcd.service" }
+
+- name: "copy ectd packages"
+  copy: src="files/etcd-{{ etcd_version }}-linux-amd64.tar.gz" dest="{{ etcd_install_path }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+
+- name: "tar ectd packages"
+  shell: "tar xzvf {{ etcd_install_path }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz -C {{ etcd_install_path }} --strip-components=1"

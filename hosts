@@ -1,0 +1,11 @@
+[etcd]
+10.10.58.101 ansible_user=root ansible_ssh_pass=root ansible_ssh_port=22 hostname=etcd1
+10.10.58.102 ansible_user=root ansible_ssh_pass=root ansible_ssh_port=22 hostname=etcd2  
+10.10.58.103 ansible_user=root ansible_ssh_pass=root ansible_ssh_port=22 hostname=etcd3 
+
+[etcd:vars]
+etcd_version=v3.3.10
+etcd_peer_tcp_ipv4_port=2380
+etcd_client_tcp_ipv4_port=2379
+etcd_install_path=/opt/soft/etcd
+etcd_initial_cluster_token=initial-cluster-token

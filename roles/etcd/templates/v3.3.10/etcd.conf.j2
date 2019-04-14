@@ -1,0 +1,17 @@
+# [member]
+BASE_DIR="/export"
+# 由于etcd_name变量比较特殊，需要和ETCD_INITIAL_CLUSTER中的值一一对应，暂时写为etcd1,配置下发后需要将该值替换成对应节点的名称
+ETCD_NAME="{{ hostname }}"
+ETCD_DATA_DIR="{{ etcd_install_path }}/data"
+ETCD_LISTEN_PEER_URLS="http://0.0.0.0:{{ etcd_peer_tcp_ipv4_port }}"
+ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:{{ etcd_client_tcp_ipv4_port }}"
+
+#[cluster]
+ETCD_INITIAL_ADVERTISE_PEER_URLS="http://0.0.0.0:{{ etcd_peer_tcp_ipv4_port }}"
+ETCD_INITIAL_CLUSTER_TOKEN="{{ etcd_initial_cluster_token }}"
+ETCD_ADVERTISE_CLIENT_URLS="http://0.0.0.0:{{ etcd_client_tcp_ipv4_port }}"
+
+#[initial-cluster]
+# 需要按照etcd集群规划节点来填写,在host文件内需要指定name和ip的对应关系
+ETCD_INITIAL_CLUSTER="{% for h in groups['etcd'] %}{{ hostvars[h]['hostname'] }}=https://{{ h }}:{{ etcd_peer_tcp_ipv4_port }}{% if not loop.last %},{% endif %}{% endfor %}"
+

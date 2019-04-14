@@ -1,0 +1,16 @@
+---
+# - hosts: "{{ host }}"
+- hosts: etcd
+  gather_facts: false
+  remote_user: root
+
+  tasks:
+    - name: "test ping"
+      ping:
+  
+    - name: "测试变量输出"
+      shell: "echo {% for h in groups['etcd'] %}{{ hostvars[h]['hostname'] }}=https://{{ h }}:{{ etcd_peer_tcp_ipv4_port }}{% if not loop.last %},{% endif %}{% endfor %}"
+      register: command_output
+    - name: show
+      debug: var=command_output.stdout_lines verbosity=0    #显示命令执行后的输出
+

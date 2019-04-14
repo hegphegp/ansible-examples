@@ -1,0 +1,28 @@
+[Unit]
+Description=Etcd Server
+After=network.target
+After=network-online.target
+Wants=network.target
+Wants=network-online.target
+Documentation=https://github.com/coreos
+
+[Service]
+Type=notify
+EnvironmentFile=-{{ etcd_install_path }}/etcd.conf
+ExecStart={{ etcd_install_path }}/etcd \
+  --name {{ hostname }} \
+  --initial-advertise-peer-urls http://{{ ansible_ssh_host }}:{{etcd_peer_tcp_ipv4_port}} \
+  --listen-peer-urls http://0.0.0.0:{{ etcd_peer_tcp_ipv4_port }} \
+  --listen-client-urls http://0.0.0.0:{{ etcd_client_tcp_ipv4_port }} \
+  --advertise-client-urls http://{{ ansible_ssh_host }}:{{etcd_client_tcp_ipv4_port}} \
+  --initial-cluster-token {{ etcd_initial_cluster_token }} \
+  --initial-cluster {% for h in groups['etcd'] %}{{ hostvars[h]['hostname'] }}=https://{{ h }}:{{ etcd_peer_tcp_ipv4_port }}{% if not loop.last %},{% endif %}{% endfor %} \
+  --initial-cluster-state new \
+  --data-dir={{ etcd_install_path }}/data
+# ExecStart={{ etcd_install_path }}/start-etcd-cluster.sh
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
