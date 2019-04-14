@@ -14,12 +14,21 @@
   with_items:
   - "{{ etcd_install_path }}"       # etcd 安装路径
   - "{{ etcd_install_path }}/data " # etcd数据目录
+
 - name: "copy config files"
   template: src="{{ item.src }}" dest="{{ item.dest }}" mode=0755 owner=root group=root
   with_items:
     - { src: "v3.3.10/etcd.conf.j2",    dest: "{{ etcd_install_path }}/etcd.conf" }
     - { src: "v3.3.10/etcd.service.j2", dest: "{{ etcd_install_path }}/etcd.service" }
     - { src: "v3.3.10/etcd.service.j2", dest: "/usr/lib/systemd/system/etcd.service" }
+
+- name: rsync dir filebeat
+  hostname: 'name={{ hostname }}'
+  when: host_is_docker != "docker"    # 表示当 ansible_date_time.year 的值等于 2019 时，就使用 shell 模块执行 touch /tmp/when.txt 命令
+
+- name: "add line"
+  shell: "echo {{ ansible_ssh_host }} {{ hostname }} "
+  when: host_is_docker != "docker"   # 表示当 ansible_date_time.year 的值等于 2019 时，就使用 shell 模块执行 touch /tmp/when.txt 命令
 
 - name: "copy ectd packages"
   copy: src="files/etcd-{{ etcd_version }}-linux-amd64.tar.gz" dest="{{ etcd_install_path }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
