@@ -24,11 +24,11 @@
 
 - name: rsync dir filebeat
   hostname: 'name={{ hostname }}'
-  when: host_is_docker != "docker"    # 表示当 ansible_date_time.year 的值等于 2019 时，就使用 shell 模块执行 touch /tmp/when.txt 命令
+  when: host_is_docker != "docker"
 
 - name: "add line"
   shell: "echo {{ ansible_ssh_host }} {{ hostname }} "
-  when: host_is_docker != "docker"   # 表示当 ansible_date_time.year 的值等于 2019 时，就使用 shell 模块执行 touch /tmp/when.txt 命令
+  when: host_is_docker != "docker"
 
 - name: "copy ectd packages"
   copy: src="files/etcd-{{ etcd_version }}-linux-amd64.tar.gz" dest="{{ etcd_install_path }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"

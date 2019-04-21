@@ -63,4 +63,11 @@ docker run --privileged -itd --restart always --net ansible-network --ip 10.10.5
 docker run --privileged -itd --restart always --net ansible-network --ip 10.10.58.101 --name web1 centos-sshd:7.6.1810 /usr/sbin/init
 docker run --privileged -itd --restart always --net ansible-network --ip 10.10.58.102 --name web2 centos-sshd:7.6.1810 /usr/sbin/init
 docker run --privileged -itd --restart always --net ansible-network --ip 10.10.58.103 --name web3 centos-sshd:7.6.1810 /usr/sbin/init
+docker exec -it ansible sh
+cd /ansible
+ansible-playbook 
+# ansible-playbook main.yml --syntax-check    # 检查yaml文件的语法是否正确
+# ansible-playbook main.yml --list-task       # 检查tasks任务
+# ansible-playbook main.yml --list-hosts      # 检查生效的主机
+# ansible-playbook main.yml --start-at-task='Copy Nginx.conf'     # 指定从某个task开始运行
 ```
