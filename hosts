@@ -9,4 +9,5 @@ etcd_peer_tcp_ipv4_port=2380
 etcd_client_tcp_ipv4_port=2379
 etcd_install_path=/opt/soft/etcd
 etcd_initial_cluster_token=initial-cluster-token
-host_is_docker=not_docker
+# host_is_docker=False
+host_is_docker=True

@@ -65,7 +65,7 @@ docker run --privileged -itd --restart always --net ansible-network --ip 10.10.5
 docker run --privileged -itd --restart always --net ansible-network --ip 10.10.58.103 --name web3 centos-sshd:7.6.1810 /usr/sbin/init
 docker exec -it ansible sh
 cd /ansible
-ansible-playbook 
+ansible-playbook mian.yml
 # ansible-playbook main.yml --syntax-check    # 检查yaml文件的语法是否正确
 # ansible-playbook main.yml --list-task       # 检查tasks任务
 # ansible-playbook main.yml --list-hosts      # 检查生效的主机

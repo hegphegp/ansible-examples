@@ -16,14 +16,20 @@
   run_once: true
 
 - name: fetch copy          # 将其它机器公钥拷贝到ansible所在的主机，而不是其他ansible客户端拷贝到当前ansible的客户端
-  fetch: src=/{{ ansible_user }}/.ssh/id_rsa.pub dest=/tmp/sshKey/{{ ansible_ssh_host }}-{{ ansible_user }}-id_rsa.pub flat=yes # 不加flat=yes时，ansible-playbook的fetch命令没有拷贝文件过来，拷贝了文件夹，并且全路径拷贝过来，但是文件夹里面没任何文件，世纪巨坑，多少人命都填不了的坑
+  fetch: src=/{{ ansible_user }}/.ssh/id_rsa.pub dest=/tmp/sshKey/{{ ansible_ssh_host }}-{{ ansible_user }}-id_rsa.pub flat=yes # 不加flat=yes时，ansible-playbook的fetch命令没有拷贝文件过来，只拷贝了文件夹，并且全路径拷贝过来，但是文件夹里面没任何文件，世纪巨坑，多少人命都填不了的坑
+
+- name: ls -l /tmp/sshKey/ | grep "^-" | wc -l # 查看公钥的个数，用于后面判断是否执行公钥推送，如果个数为零，不推送
+  local_action: command /bin/sh -c "ls -l /tmp/sshKey/ | grep '^-' | wc -l"
+  run_once: true
+  register: result
 
 - name: append file authorized_keys.log # 公钥拼接成一个文件
   local_action: command /bin/sh -c "cat /tmp/sshKey/* >>/tmp/sshKey/authorized_keys.log"   # local_action表示命令在当前宿主机运行
+  when: result.stdout != "0"
   run_once: true
 
 - name: copy authorized_keys # 将处理好的公钥分发给各个机器上
   copy: src=/tmp/sshKey/authorized_keys.log dest=/{{ ansible_user }}/.ssh/authorized_keys mode=0600
-  
+  when: result.stdout != "0"
   
   
