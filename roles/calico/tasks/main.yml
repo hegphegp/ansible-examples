@@ -1,0 +1,7 @@
+# curl -L https://github.com/projectcalico/calicoctl/releases/
+# curl -L https://github.com/projectcalico/calicoctl/releases/download/v3.3.6/calicoctl > calicoctl-v3.3.6
+# curl -L https://github.com/projectcalico/calicoctl/releases/download/v3.4.4/calicoctl > calicoctl-v3.4.4
+# curl -L https://github.com/projectcalico/calicoctl/releases/download/v3.5.4/calicoctl > calicoctl-v3.5.4
+# curl -L https://github.com/projectcalico/calicoctl/releases/download/v3.6.1/calicoctl > calicoctl-v3.6.1
+
+
