@@ -20,13 +20,13 @@
 - name: prepare some dirs
   file: name={{ item }} state=directory
   with_items:
-  - "{{ docker_install_path }}"       # docker安装路径
-  - "{{ STORAGE_DIR }}"               # docker数据目录
+    - "{{ docker_install_path }}"       # docker安装路径
+    - "{{ STORAGE_DIR }}"               # docker数据目录
 
 - name: "copy config files"
   template: src="{{ item.src }}" dest="{{ item.dest }}" mode=0755 owner=root group=root
   with_items:
-    - { src: "{{ docker_version }}/daemon.json.j2",    dest: "/etc/docker/daemon.json" }
+    - { src: "{{ docker_version }}/daemon.json.j2",    dest: "{{ docker_install_path }}/daemon.json" }
     - { src: "{{ docker_version }}/docker.service.j2", dest: "/usr/lib/systemd/system/docker.service" }
 
 - name: "copy docker packages"

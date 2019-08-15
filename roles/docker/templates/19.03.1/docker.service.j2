@@ -4,7 +4,7 @@ Documentation=http://docs.docker.io
 
 [Service]
 Environment="PATH={{ docker_install_path }}:/bin:/sbin:/usr/bin:/usr/sbin"
-ExecStart={{ docker_install_path }}/dockerd 
+ExecStart={{ docker_install_path }}/dockerd --config-file {{ docker_install_path }}/daemon.json
 ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
 ExecReload=/bin/kill -s HUP $MAINPID
 Restart=always
