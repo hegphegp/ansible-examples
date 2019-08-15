@@ -1,0 +1,67 @@
+# ---
+# # - hosts: "{{ host }}"
+# - hosts: etcd
+#   gather_facts: false
+#   remote_user: root
+
+#   tasks:
+
+- name: "test ping"
+  ping:
+
+- name: "test docker"
+  shell: source /etc/profile && docker -v
+  ignore_errors: True
+  register: result
+
+- name: "uninstall docker"
+  shell: yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine docker-ce
+
+- name: prepare some dirs
+  file: name={{ item }} state=directory
+  with_items:
+  - "{{ docker_install_path }}"       # docker安装路径
+  - "{{ STORAGE_DIR }}"               # docker数据目录
+
+- name: "copy config files"
+  template: src="{{ item.src }}" dest="{{ item.dest }}" mode=0755 owner=root group=root
+  with_items:
+    - { src: "{{ docker_version }}/daemon.json.j2",    dest: "/etc/docker/daemon.json" }
+    - { src: "{{ docker_version }}/docker.service.j2", dest: "/usr/lib/systemd/system/docker.service" }
+
+- name: "copy docker packages"
+  copy: src="files/docker-{{ docker_version }}.tgz" dest="{{ docker_install_path }}/docker-{{ docker_version }}.tgz"
+
+- name: "tar docker packages"
+  shell: "tar xzvf {{ docker_install_path }}/docker-{{ docker_version }}.tgz -C {{ docker_install_path }} --strip-components=1"
+
+- name: docker命令自动补全
+  shell: cp {{ docker_install_path }}/docker /etc/bash_completion.d/docker && chmod 0644 /etc/bash_completion.d/docker
+  
+- name: flush-iptables
+  shell: "iptables -P INPUT ACCEPT \
+        && iptables -F && iptables -X \
+        && iptables -F -t nat && iptables -X -t nat \
+        && iptables -F -t raw && iptables -X -t raw \
+        && iptables -F -t mangle && iptables -X -t mangle"
+
+- name: 开机启用docker 服务
+  shell: systemctl enable docker
+  ignore_errors: true
+
+- name: 开启docker 服务
+  shell: systemctl daemon-reload && systemctl restart docker
+  tags: upgrade_docker
+
+- name: 轮询等待docker服务运行
+  shell: "systemctl status docker.service|grep Active"
+  register: docker_status
+  until: '"running" in docker_status.stdout'
+  retries: 8
+  delay: 2
+  tags: upgrade_docker
+
+# 配置 docker 命令软链接，方便单独安装 docker
+- name: 配置 docker 命令软链接
+  file: src={{ docker_install_path }}/docker dest=/usr/bin/docker state=link
+  ignore_errors: true

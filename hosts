@@ -1,7 +1,7 @@
 [etcd]
-10.10.58.101 ansible_user=root ansible_ssh_pass=root ansible_ssh_port=22 hostname=etcd1
-10.10.58.102 ansible_user=root ansible_ssh_pass=root ansible_ssh_port=22 hostname=etcd2  
-10.10.58.103 ansible_user=root ansible_ssh_pass=root ansible_ssh_port=22 hostname=etcd3 
+10.10.58.101 ansible_user=root ansible_ssh_pass=root ansible_ssh_port=22
+10.10.58.102 ansible_user=root ansible_ssh_pass=root ansible_ssh_port=22
+10.10.58.103 ansible_user=root ansible_ssh_pass=root ansible_ssh_port=22
 
 [etcd:vars]
 etcd_version=v3.3.10
@@ -11,3 +11,9 @@ etcd_install_path=/opt/soft/etcd
 etcd_initial_cluster_token=initial-cluster-token
 # host_is_docker=False
 host_is_docker=True
+
+
+[docker]
+10.10.58.101 ansible_user=root ansible_ssh_pass=root ansible_ssh_port=22
+10.10.58.102 ansible_user=root ansible_ssh_pass=root ansible_ssh_port=22 
+10.10.58.103 ansible_user=root ansible_ssh_pass=root ansible_ssh_port=22
